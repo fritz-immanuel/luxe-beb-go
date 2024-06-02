@@ -11,19 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// BankRepository initialize object from model Outlet, to be used in database operation
 type BankRepository struct {
 	repository       data.GenericStorage
 	statusRepository data.GenericStorage
 }
 
-// NewOutletRepository initialize service that provide connection to Database
 func NewBankRepository(repository data.GenericStorage, statusRepository data.GenericStorage) BankRepository {
-	//db := &models.DB{DB: configs.ActiveDB}
 	return BankRepository{repository: repository, statusRepository: statusRepository}
 }
 
-// FindAll is a function to get all Data
 func (s BankRepository) FindAll(ctx *gin.Context, params models.FindAllBankParams) ([]*models.Bank, *types.Error) {
 	data := []*models.Bank{}
 	bulks := []*models.BankBulk{}
@@ -90,23 +86,22 @@ func (s BankRepository) FindAll(ctx *gin.Context, params models.FindAllBankParam
 	return data, nil
 }
 
-// Find is a function to get by ID
 func (s BankRepository) Find(ctx *gin.Context, id string) (*models.Bank, *types.Error) {
 	result := models.Bank{}
 	bulks := []*models.BankBulk{}
 	var err error
 
-	query := fmt.Sprintf(`
-  SELECT banks.id, banks.name,
-  banks.status_id, status.name status_name
+	query := `
+  SELECT
+    banks.id, banks.name,
+    banks.status_id, status.name status_name
   FROM banks
   JOIN status ON banks.status_id = status.id
-  WHERE banks.id = :id`)
+  WHERE banks.id = :id`
 
 	err = s.repository.SelectWithQuery(ctx, &bulks, query, map[string]interface{}{
 		"id": id,
 	})
-
 	if err != nil {
 		return nil, &types.Error{
 			Path:       ".BankStorage->Find()",
@@ -141,7 +136,6 @@ func (s BankRepository) Find(ctx *gin.Context, id string) (*models.Bank, *types.
 	return &result, nil
 }
 
-// Create is a function to get by ID
 func (s BankRepository) Create(ctx *gin.Context, obj *models.Bank) (*models.Bank, *types.Error) {
 	data := models.Bank{}
 	result, err := s.repository.Insert(ctx, obj)
@@ -169,7 +163,6 @@ func (s BankRepository) Create(ctx *gin.Context, obj *models.Bank) (*models.Bank
 	return &data, nil
 }
 
-// Update is a function to get by ID
 func (s BankRepository) Update(ctx *gin.Context, obj *models.Bank) (*models.Bank, *types.Error) {
 	data := models.Bank{}
 	err := s.repository.Update(ctx, obj)
@@ -196,7 +189,6 @@ func (s BankRepository) Update(ctx *gin.Context, obj *models.Bank) (*models.Bank
 	return &data, nil
 }
 
-// FindStatus is a function to get by ID
 func (s BankRepository) FindStatus(ctx *gin.Context) ([]*models.Status, *types.Error) {
 	businessStatus := []*models.Status{}
 
@@ -214,7 +206,6 @@ func (s BankRepository) FindStatus(ctx *gin.Context) ([]*models.Status, *types.E
 	return businessStatus, nil
 }
 
-// UpdateStatus is a function to get by ID
 func (s BankRepository) UpdateStatus(ctx *gin.Context, id string, statusID string) (*models.Bank, *types.Error) {
 	data := models.Bank{}
 	err := s.repository.UpdateStatus(ctx, id, statusID)

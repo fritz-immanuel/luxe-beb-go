@@ -4,6 +4,12 @@ INSERT INTO
 VALUES
   ('0', 'Inactive'), ('1', 'Active');
 
+TRUNCATE status;
+INSERT INTO
+  product_status (id, name)
+VALUES
+  ('0', 'Inactive'), ('1', 'Active'), ('2', 'Sold');
+
 INSERT INTO
   code_sequences (prefix, sequence, name, year)
 VALUES
@@ -34,11 +40,11 @@ VALUES
 INSERT INTO
   card_providers (id, name, created_at, created_by, updated_at, updated_by)
 VALUES
-  ('1', 'Visa', '2021-10-22 09:55:00', 0, '2021-10-22 09:55:00', 0),
-  ('2', 'MasterCard', '2021-10-22 09:55:00', 0, '2021-10-22 09:55:00', 0),
-  ('3', 'American Express', '2021-10-22 09:55:00', 0, '2021-10-22 09:55:00', 0),
-  ('4', 'JCB', '2021-10-22 09:55:00', 0, '2021-10-22 09:55:00', 0),
-  ('5', 'UnionPay', '2021-10-22 09:55:00', 0, '2021-10-22 09:55:00', 0);
+  ('1', 'Visa', UTC_TIMESTAMP + INTERVAL 7 HOUR, 0, UTC_TIMESTAMP + INTERVAL 7 HOUR, 0),
+  ('2', 'MasterCard', UTC_TIMESTAMP + INTERVAL 7 HOUR, 0, UTC_TIMESTAMP + INTERVAL 7 HOUR, 0),
+  ('3', 'American Express', UTC_TIMESTAMP + INTERVAL 7 HOUR, 0, UTC_TIMESTAMP + INTERVAL 7 HOUR, 0),
+  ('4', 'JCB', UTC_TIMESTAMP + INTERVAL 7 HOUR, 0, UTC_TIMESTAMP + INTERVAL 7 HOUR, 0),
+  ('5', 'UnionPay', UTC_TIMESTAMP + INTERVAL 7 HOUR, 0, UTC_TIMESTAMP + INTERVAL 7 HOUR, 0);
 
 TRUNCATE card_types;
 INSERT INTO
