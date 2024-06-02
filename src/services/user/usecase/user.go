@@ -135,7 +135,6 @@ func (u *UserUsecase) Update(ctx *gin.Context, id string, obj models.User) (*mod
 
 	data.Name = obj.Name
 	data.Email = obj.Email
-	data.Username = obj.Username
 
 	result, err := u.userRepo.Update(ctx, data)
 	if err != nil {
@@ -227,3 +226,43 @@ func (u *UserUsecase) Login(ctx *gin.Context, params models.FindAllUserParams) (
 }
 
 // //
+
+// UpdateCredentials()  Updates the username and password of the user
+func (u *UserUsecase) UpdateCredentials(ctx *gin.Context, id string, obj models.User) (*models.User, *types.Error) {
+	validate := validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+
+	errValidation := validate.Struct(obj)
+	if errValidation != nil {
+		return nil, &types.Error{
+			Path:       ".UserUsecase->UpdateCredentials()",
+			Message:    errValidation.Error(),
+			Error:      errValidation,
+			StatusCode: http.StatusUnprocessableEntity,
+			Type:       "validation-error",
+		}
+	}
+
+	data, err := u.userRepo.Find(ctx, id)
+	if err != nil {
+		err.Path = ".UserUsecase->UpdateCredentials()" + err.Path
+		return nil, err
+	}
+
+	data.Username = obj.Username
+	data.Password = obj.Password
+
+	result, err := u.userRepo.Update(ctx, data)
+	if err != nil {
+		err.Path = ".UserUsecase->UpdateCredentials()" + err.Path
+		return nil, err
+	}
+
+	return result, err
+}

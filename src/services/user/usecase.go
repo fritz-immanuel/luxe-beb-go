@@ -20,4 +20,6 @@ type Usecase interface {
 
 	// LOGIN
 	Login(*gin.Context, models.FindAllUserParams) (*models.UserLogin, *types.Error)
+
+	UpdateCredentials(*gin.Context, string, models.User) (*models.User, *types.Error)
 }

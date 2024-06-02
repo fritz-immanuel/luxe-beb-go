@@ -80,7 +80,7 @@ func (h *BankHandler) FindAll(c *gin.Context) {
 		}
 	}
 
-	dataresponse := types.ResultAll{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data Bank Berhasil Ditampilkan", TotalData: length, Page: page, Size: size, Data: datas}
+	dataresponse := types.ResultAll{Status: "Success", StatusCode: http.StatusOK, Message: "Data shown successfuly", TotalData: length, Page: page, Size: size, Data: datas}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -101,7 +101,7 @@ func (h *BankHandler) Find(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data Bank Berhasil Ditampilkan", Data: result}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data shown successfuly", Data: result}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -131,7 +131,7 @@ func (h *BankHandler) Create(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data Bank Berhasil Ditambahkan", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data created successfuly", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -162,7 +162,7 @@ func (h *BankHandler) Update(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data Bank Berhasil Diperbarui", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data successfuly updated", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -178,7 +178,7 @@ func (h *BankHandler) FindStatus(c *gin.Context) {
 			return
 		}
 	}
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data Bank Status Berhasil Ditampilkan", Data: datas}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data shown successfuly", Data: datas}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -221,7 +221,7 @@ func (h *BankHandler) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Status Bank Berhasil Diperbarui", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Status update success", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}

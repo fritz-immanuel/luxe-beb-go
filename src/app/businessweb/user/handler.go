@@ -54,8 +54,7 @@ func (h UserHandler) RegisterAPI(db *sqlx.DB, dataManager *data.Manager, slackNo
 
 		rs.POST("auth/login", base.Login)
 
-		//  TO DO
-		// - Update Username & Password API
+		rs.PUT("/:id/creds", middleware.Auth, base.UpdateCredentials)
 	}
 
 	status := v.Group("/statuses")
@@ -88,7 +87,7 @@ func (h *UserHandler) FindAll(c *gin.Context) {
 		}
 	}
 
-	dataresponse := types.ResultAll{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data User Berhasil Ditampilkan", TotalData: length, Page: page, Size: size, Data: datas}
+	dataresponse := types.ResultAll{Status: "Success", StatusCode: http.StatusOK, Message: "Data shown successfuly", TotalData: length, Page: page, Size: size, Data: datas}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -109,7 +108,7 @@ func (h *UserHandler) Find(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data User Berhasil Ditampilkan", Data: result}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data shown successfuly", Data: result}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -139,7 +138,7 @@ func (h *UserHandler) Create(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data User Berhasil Ditambahkan", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data created successfuly", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -170,7 +169,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data User Berhasil Diperbarui", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "User successfuly updated", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -186,7 +185,7 @@ func (h *UserHandler) FindStatus(c *gin.Context) {
 			return
 		}
 	}
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Data User Status Berhasil Ditampilkan", Data: datas}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Data successfuly shown", Data: datas}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -229,7 +228,7 @@ func (h *UserHandler) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Status User Berhasil Diperbarui", Data: data}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Status update success", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
@@ -266,7 +265,46 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	dataresponse := types.Result{Status: "Sukses", StatusCode: http.StatusOK, Message: "Login Berhasil", Data: datas}
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Login success", Data: datas}
+	h.Result = gin.H{
+		"result": dataresponse,
+	}
+
+	c.JSON(http.StatusOK, h.Result)
+}
+
+// // //
+
+// UPDATE CREDENTIALS
+func (h *UserHandler) UpdateCredentials(c *gin.Context) {
+	var err *types.Error
+	var obj models.User
+	var data *models.User
+
+	hash := md5.New()
+	io.WriteString(hash, c.PostForm("Password"))
+
+	id := c.Param("id")
+
+	obj.Username = c.PostForm("Username")
+	obj.Password = fmt.Sprintf("%x", hash.Sum(nil))
+
+	errTransaction := h.dataManager.RunInTransaction(c, func(tctx *gin.Context) *types.Error {
+		data, err = h.UserUsecase.UpdateCredentials(c, id, obj)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if errTransaction != nil {
+		errTransaction.Path = ".UserHandler->UpdateCredentials()" + errTransaction.Path
+		response.Error(c, h.notifier, errTransaction.Message, errTransaction.StatusCode, *errTransaction)
+		return
+	}
+
+	dataresponse := types.Result{Status: "Success", StatusCode: http.StatusOK, Message: "Update success", Data: data}
 	h.Result = gin.H{
 		"result": dataresponse,
 	}
