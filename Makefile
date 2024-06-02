@@ -1,5 +1,3 @@
-# Copyright 2018 Shopfazz Authors.
-
 CI_CONTRACT := docker-1
 
 # Which architecture to build
@@ -9,8 +7,7 @@ ARCH ?= amd64
 IMAGE := luxe-beb-go
 
 # The docker registry ip
-REGISTRY := atomicindonesia
-#REGISTRY := rickyhandoko
+REGISTRY := fritzimmanuel
 
 # This version-strategy uses git tags to set the version string
 VERSION := $(shell git describe --tags --always --dirty)
@@ -36,10 +33,9 @@ ci-docker-image:
 	echo "building the $(IMAGE) container..."
 	docker build --build-arg TOKEN="$(GITHUB_TOKEN)" --label "version=$(VERSION)" -t $(CI_DOCKER_IMAGE_OUTPUT) .
 
-
 docker: Dockerfile
 	echo "building the $(IMAGE) container..."
-	docker build --label "version=$(VERSION)" -t $(IMAGE):$(VERSION) .
+	docker build --label "version=$(VERSION)" --build-arg "version=$(VERSION)" -t $(IMAGE):$(VERSION) .
 
 push-docker: .push-docker
 .push-docker:
