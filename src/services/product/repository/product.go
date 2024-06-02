@@ -29,15 +29,31 @@ func (s ProductRepository) FindAll(ctx *gin.Context, params models.FindAllProduc
 	where := `TRUE`
 
 	if params.FindAllParams.DataFinder != "" {
-		where += fmt.Sprintf(" AND %s", params.FindAllParams.DataFinder)
+		where += fmt.Sprintf(` AND %s`, params.FindAllParams.DataFinder)
 	}
 
 	if params.FindAllParams.StatusID != "" {
-		where += fmt.Sprintf(" AND products.%s", params.FindAllParams.StatusID)
+		where += fmt.Sprintf(` AND products.%s`, params.FindAllParams.StatusID)
+	}
+
+	if params.Code != "" {
+		where += ` AND products.code = :code`
+	}
+
+	if params.Name != "" {
+		where += ` AND products.name LIKE ":name%%"`
+	}
+
+	if params.BrandID != "" {
+		where += ` AND products.brand_id = :brand_id`
+	}
+
+	if params.CategoryID != "" {
+		where += ` AND products.category_id = :category_id`
 	}
 
 	if params.FindAllParams.SortBy != "" {
-		where += fmt.Sprintf(" ORDER BY %s", params.FindAllParams.SortBy)
+		where += fmt.Sprintf(` ORDER BY %s`, params.FindAllParams.SortBy)
 	}
 
 	if params.FindAllParams.Page > 0 && params.FindAllParams.Size > 0 {
@@ -55,9 +71,13 @@ func (s ProductRepository) FindAll(ctx *gin.Context, params models.FindAllProduc
   `, where)
 
 	err = s.repository.SelectWithQuery(ctx, &bulks, query, map[string]interface{}{
-		"limit":     params.FindAllParams.Size,
-		"offset":    ((params.FindAllParams.Page - 1) * params.FindAllParams.Size),
-		"status_id": params.FindAllParams.StatusID,
+		"limit":       params.FindAllParams.Size,
+		"offset":      ((params.FindAllParams.Page - 1) * params.FindAllParams.Size),
+		"status_id":   params.FindAllParams.StatusID,
+		"code":        params.Code,
+		"name":        params.Name,
+		"brand_id":    params.BrandID,
+		"category_id": params.CategoryID,
 	})
 
 	if err != nil {
